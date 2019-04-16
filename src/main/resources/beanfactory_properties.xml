@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+<!-- 静态工厂： factory-method: 配置静态工厂方法， constructor-arg: 配置静态工厂方法参数-->
+    <bean id="staticFactory" class="com.liyu.beanfactory.StaticBeanFactory" factory-method="getInstance">
+        <!-- 静态工厂方法传入参数 -->
+        <constructor-arg value="benz"></constructor-arg>
+    </bean>
+
+    <!--动态工厂模式 -->
+    <!-- 配置工厂实例-->
+    <bean id="dynamicFactory" class="com.liyu.beanfactory.DynamicBeanFactory"/>
+    <!--通过实例工厂配置bean -->
+    <bean id="car" factory-bean="dynamicFactory" factory-method="getInstance">
+        <constructor-arg value="audi"/>
+    </bean>
+</beans>

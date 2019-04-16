@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/util
+            http://www.springframework.org/schema/util/spring-util.xsd">
+
+
+    <!--根据不同参数配置不同的构造器(重载）: 参数列表不同：参数个数、参数类型不同   )-->
+    <bean id="car1" class="com.liyu.bean.Car">
+        <!-- 构造器注入, 需要在类中实现该构造器 -->
+        <constructor-arg value="benz" type="java.lang.String"/>
+        <constructor-arg value="130000.00" type="java.lang.Double"/>
+    </bean>
+
+    <bean id="car2" class="com.liyu.bean.Car">
+        <constructor-arg value="benz" type="java.lang.String"/>
+        <constructor-arg value="2" type="java.lang.Integer"/>
+    </bean>
+
+    <!--配置bean-->
+    <bean id="person" class="com.liyu.bean.Person">
+        <!--配置bean的属性, 通过set方法注入-->
+        <property name="userName" value="tom"/>
+        <property name="age" value="10"/>
+        <!-- property中的ref属性建立Bean之间的引用关系(外部Bean) -->
+        <property name="car" ref="car2"/>
+        <!-- 配置内部bean, 内部bean不能被外部bean引用  -->
+        <!--            <property name="car">-->
+        <!--                    <bean id = "car3" class="com.liyu.bean.Car">-->
+        <!--                           <property name="carName" value="benz"/>-->
+        <!--                        <property name="price" value="123.3"/>-->
+        <!--                    </bean>-->
+        <!--            </property>-->
+
+        <!-- 测试集合List属性 -->
+        <property name="carList">
+            <list>
+                <ref bean="car1"/>
+                <ref bean="car2"/>
+                <bean class="com.liyu.bean.Car">
+                    <constructor-arg value="benz" type="java.lang.String"/>
+                    <constructor-arg value="130000.00" type="java.lang.Double"/>
+                    <constructor-arg value="10" type="java.lang.Integer"/>
+                </bean>
+            </list>
+        </property>
+
+        <!-- Map集合属性 -->
+        <property name="carMap">
+            <map>
+                <entry key="112" value-ref="car1"/>
+                <entry key="113" value-ref="car2"/>
+                <entry key="114">
+                    <bean class="com.liyu.bean.Car">
+                        <constructor-arg value="benz" type="java.lang.String"/>
+                        <constructor-arg value="130000.00" type="java.lang.Double"/>
+                        <constructor-arg value="10" type="java.lang.Integer"/>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
+    <!-- 配置DataSource -->
+<!--    <bean id="dataSource" class="com.liyu.Utils.DataSource">-->
+<!--        <property name="properties">-->
+<!--            <props>-->
+<!--                <prop key="username">root</prop>-->
+<!--                <prop key="password">root</prop>-->
+<!--                <prop key="jdbcUrl">jdbc:mysql:///test</prop>-->
+<!--                <prop key="driveClass">com.jdbc.mysql.Driver</prop>-->
+<!--            </props>-->
+<!--        </property>-->
+<!--    </bean>-->
+
+
+    <!-- 配置单独的集合bean, 以供多个bean进行引用,需要导入util命名空间 -->
+    <util:list id="carList">
+        <ref bean="car1"/>
+        <ref bean="car2"/>
+    </util:list>
+
+
+    <bean id="person1" class="com.liyu.bean.Person">
+        <!--配置bean的属性, 通过set方法注入-->
+        <property name="userName" value="tom"/>
+        <property name="age" value="10"/>
+        <!-- property中的ref属性建立Bean之间的引用关系(外部Bean) -->
+        <property name="car" ref="car2"/>
+        <property name="carList" ref="carList"/>
+    </bean>
+
+
+    <!-- p命名空间未生效-->
+    <!--    使用p命名空间进行bean之间相互引用-->
+    <bean id="banana1" class="com.liyu.bean.Banana" p:name="banana" p:brand="banana"></bean>
+    <!--    配置Apple,使用p命名空间-->
+    <bean id="apple" class="com.liyu.bean.Apple" p:name="apple" p:banana-ref="banana1"></bean>
+
+
+    <!--  bean之间的继承,使用bean的parent属性指定该bean继承哪个bean;
+        若该bean指定abstract属性时，该bean不能被IOC实例化，只能被继承；
+         若一个bean的class属性没有被指定，则该bean是一个抽象bean-->
+    <bean id="banana" class="com.liyu.bean.Banana" init-method="init" destroy-method="destroy">
+        <property name="name" value="banana"/>
+        <property name="brand" value="brand"/>
+    </bean>
+
+    <bean id="apple1" parent="banana">
+        <property name="brand" value="apple"/>
+    </bean>
+
+</beans>
